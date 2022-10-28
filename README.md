@@ -4,12 +4,7 @@ This is a networked Scrabble game developed in Python during the containment per
 
 Redaction in progress...
 
-<center>
-![](./img/board.png)
-</center>
-
-
-
+![board](./img/board.png)
 
 --
 
