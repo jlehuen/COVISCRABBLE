@@ -40,9 +40,9 @@ from constants import *
 from common import *
 from utils import *
 
-##########################
-## Class of Application ##
-##########################
+##############################
+## Class of the application ##
+##############################
 
 class Scrabble(Tk):
 
@@ -69,12 +69,12 @@ class Scrabble(Tk):
 		self.canvas.create_rectangle(STAND_X0, STAND_Y0, STAND_X1, STAND_Y1, fill='green', width=0)
 		self.canvas.pack(side=TOP)
 
-		if serverflag: Button(self, text='  Start Game  ', command=self.restart).pack(side=LEFT)
+		if serverflag: Button(self, text='  Start Game  ', bg='#99FFCC', command=self.restart).pack(side=LEFT, padx=10, pady=10)
 #		Button(self, text='Nouvelle distribution', command=self.newdeal).pack(side=LEFT)
-		Button(self, text='  Exit Game  ', command=quit).pack(side=RIGHT)
+		Button(self, text='  Exit Game  ', bg='#99FFCC', command=quit).pack(side=RIGHT, padx=10, pady=10)
 
-		self.btn_valider = Button(self, text='  Validate  ', state=DISABLED, command=self.valider)
-		self.btn_valider.pack(side=BOTTOM)
+		self.btn_valider = Button(self, text='  Validate  ', state=DISABLED, bg='#99FFCC', command=self.valider)
+		self.btn_valider.pack(side=BOTTOM, padx=10, pady=10)
 		center(self)
 
 		# Create the score window
