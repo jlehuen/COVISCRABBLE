@@ -2,12 +2,12 @@
 
 #######################################
 ## --- C O V I - S C R A B B L E --- ##
-## Copyright (c) Jérôme Lehuen 2020  ##
+## Copyright (c) Jérôme Lehuen 2022  ##
 #######################################
 
 #########################################################################
 ##                                                                     ##
-##   This file is part of COVI-SCRABBLE.                               ##
+##   This file is part of COVI-SCRABBLE version 1.1                    ##
 ##                                                                     ##
 ##   COVI-SCRABBLE is free software: you can redistribute it and/or    ##
 ##   modify it under the terms of the GNU General Public License as    ##
@@ -72,8 +72,10 @@ class Abstract_serveur(ABC):
 	clients = [] # The connected clients
 
 	@abstractmethod
-	def __init__(self, version, port):
-		self.version = version
+	def __init__(self, version, port, userdico):
+		self.version = version # Tuple (maj,min)
+		self.userdico = userdico # Dictionnary {'login1':'pass1', etc.}
+
 		self.port = port
 		self.host = getmyip()
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -116,9 +118,11 @@ class Abstract_serveur(ABC):
 	def check_version(self, version):
 		return version == self.version
 
-	def identification(self, login, password):
-		# TODO
-		return login == password
+	def check_login(self, login):
+		return login in self.userdico
+
+	def check_password(self, login, password):
+		return self.userdico[login] == password
 
 	def handcheck(self, sock, addr):
 		sock.settimeout(5) # 5 seconds to answer
@@ -154,9 +158,14 @@ class Abstract_serveur(ABC):
 
 			password = get_data('^password:(\S+)$', reponse)
 
-			# Check the login and the password
-			if not self.identification(login, password):
-				self.erreur(sock, 'bad login or password')
+			# Check login
+			if not self.check_login(login):
+				self.erreur(sock, 'unknown user')
+				return False
+
+			# Check password
+			if not self.check_password(login, password):
+				self.erreur(sock, 'wrong password')
 				return False
 
 			# Welcome Message
@@ -203,6 +212,3 @@ class Abstract_serveur(ABC):
 			client.close()
 			self.clients.remove(client)
 			print('[server] %s is unregistered' % client.login)
-
-
-

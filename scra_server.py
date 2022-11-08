@@ -2,12 +2,12 @@
 
 #######################################
 ## --- C O V I - S C R A B B L E --- ##
-## Copyright (c) Jérôme Lehuen 2020  ##
+## Copyright (c) Jérôme Lehuen 2022  ##
 #######################################
 
 #########################################################################
 ##                                                                     ##
-##   This file is part of COVI-SCRABBLE.                               ##
+##   This file is part of COVI-SCRABBLE version 1.1                    ##
 ##                                                                     ##
 ##   COVI-SCRABBLE is free software: you can redistribute it and/or    ##
 ##   modify it under the terms of the GNU General Public License as    ##
@@ -30,7 +30,7 @@ import time
 import re
 
 from random import choice
-from common import *
+from constants import *
 
 from socketlib.abstract_serveur import Abstract_serveur
 
@@ -43,8 +43,9 @@ def get_data(expression, message):
 
 class Serveur(Abstract_serveur):
 
-	def __init__(self, version, port):
-		Abstract_serveur.__init__(self, version, port)
+	def __init__(self, VERSION, LANG, port, userdico):
+		Abstract_serveur.__init__(self, VERSION, port, userdico)
+		self.BAG_INIT = eval('BAG_%s' % LANG)  # BAG_FR / BAG_EN / etc.
 
 	#####################################
 	## Processing of received messages ##
@@ -77,11 +78,10 @@ class Serveur(Abstract_serveur):
 
 	bag = None       # The bag of letters
 	id_player = 0    # Current Player Index
-	PIOCHE = BAG_FR  # BAG_FR / BAG_EN
 
 	def init_bag(self):
 		self.bag = []
-		for key,data in self.PIOCHE.items():
+		for key,data in self.BAG_INIT.items():
 			self.bag.extend([key for _ in range(data[1])])
 
 	def tirage(self, nblettres):

@@ -2,12 +2,12 @@
 
 #######################################
 ## --- C O V I - S C R A B B L E --- ##
-## Copyright (c) Jérôme Lehuen 2020  ##
+## Copyright (c) Jérôme Lehuen 2022  ##
 #######################################
 
 #########################################################################
 ##                                                                     ##
-##   This file is part of COVI-SCRABBLE.                               ##
+##   This file is part of COVI-SCRABBLE version 1.1                    ##
 ##                                                                     ##
 ##   COVI-SCRABBLE is free software: you can redistribute it and/or    ##
 ##   modify it under the terms of the GNU General Public License as    ##
@@ -26,13 +26,7 @@
 ##                                                                     ##
 #########################################################################
 
-BOARD_IMG = 'data/scrabble_max.png'
-BOARD_WIDTH,BOARD_HEIGHT = 405,410
-CANVAS_WIDTH,CANVAS_HEIGHT = 800,950
-STAND_X0,STAND_Y0,STAND_X1,STAND_Y1 = 0,820,805,955
-
-X0,Y0 = 92,42 # Position of the first square of the board
-L0,H0 = 45,49 # Width and height of letters
-MIN_X,MIN_Y = 23,25 # Mini limits of the board
-MAX_X,MAX_Y = 783,931 # Maxi limits of the board
-STAND_Y = 844 # Mini limit of the stand
+USERS = {
+	'toto':'toto',
+	'titi':'titi'
+}

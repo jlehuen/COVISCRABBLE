@@ -2,12 +2,12 @@
 
 #######################################
 ## --- C O V I - S C R A B B L E --- ##
-## Copyright (c) Jérôme Lehuen 2020  ##
+## Copyright (c) Jérôme Lehuen 2022  ##
 #######################################
 
 #########################################################################
 ##                                                                     ##
-##   This file is part of COVI-SCRABBLE.                               ##
+##   This file is part of COVI-SCRABBLE version 1.1                    ##
 ##                                                                     ##
 ##   COVI-SCRABBLE is free software: you can redistribute it and/or    ##
 ##   modify it under the terms of the GNU General Public License as    ##
@@ -27,10 +27,9 @@
 #########################################################################
 
 PORT=1234
-
 kill -9 $(lsof -ti tcp:$PORT) &> /dev/null
 
 cd "$(dirname "$0")"
 export BASE=$(pwd)
-export DICO=dico_fr
-python3 main.py -serv $PORT
+
+python3 main.py -fr -serv $PORT database

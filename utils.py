@@ -2,12 +2,12 @@
 
 #######################################
 ## --- C O V I - S C R A B B L E --- ##
-## Copyright (c) Jérôme Lehuen 2020  ##
+## Copyright (c) Jérôme Lehuen 2022  ##
 #######################################
 
 #########################################################################
 ##                                                                     ##
-##   This file is part of COVI-SCRABBLE.                               ##
+##   This file is part of COVI-SCRABBLE version 1.1                    ##
 ##                                                                     ##
 ##   COVI-SCRABBLE is free software: you can redistribute it and/or    ##
 ##   modify it under the terms of the GNU General Public License as    ##
@@ -55,12 +55,12 @@ def center(win, parent=None):
 		parent.update_idletasks()
 		x = parent.winfo_x() + parent.winfo_width() // 2 - width // 2
 		y = parent.winfo_y() + parent.winfo_height() // 2 - height // 2
-		win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+		win.geometry('%dx%d+%d+%d' % (width, height, x, y))
 	else:
 		screenwidth, screenheight = screen_size()
 		x = screenwidth // 2 - width // 2
 		y = screenheight // 2 - height // 2
-		win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+		win.geometry('%dx%d+%d+%d' % (width, height, x, y))
 
 ################################
 ## Waiting for keyboard event ##

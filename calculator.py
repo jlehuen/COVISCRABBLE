@@ -2,12 +2,12 @@
 
 #######################################
 ## --- C O V I - S C R A B B L E --- ##
-## Copyright (c) Jérôme Lehuen 2020  ##
+## Copyright (c) Jérôme Lehuen 2022  ##
 #######################################
 
 #########################################################################
 ##                                                                     ##
-##   This file is part of COVI-SCRABBLE.                               ##
+##   This file is part of COVI-SCRABBLE version 1.1                    ##
 ##                                                                     ##
 ##   COVI-SCRABBLE is free software: you can redistribute it and/or    ##
 ##   modify it under the terms of the GNU General Public License as    ##
@@ -26,7 +26,7 @@
 ##                                                                     ##
 #########################################################################
 
-from common import *
+from constants import *
 
 def calculer_score(plateau, liste, dico):
 	print('   Calculating the score...')
@@ -37,10 +37,10 @@ def calculer_score(plateau, liste, dico):
 		return False,False
 
 	# Put the letters of the word in the right order
-	liste.sort(key=lambda lettre: lettre.ligne) # Sort on the lines
-	liste.sort(key=lambda lettre: lettre.colonne) # Sort on columns
-	list_li = list(map(lambda lettre: lettre.ligne, liste)) # List of lines
-	list_co = list(map(lambda lettre: lettre.colonne, liste)) # List of columns
+	liste.sort(key=lambda lettre: lettre.li) # Sort on the lines
+	liste.sort(key=lambda lettre: lettre.co) # Sort on columns
+	list_li = list(map(lambda lettre: lettre.li, liste)) # List of lines
+	list_co = list(map(lambda lettre: lettre.co, liste)) # List of columns
 
 	# Determining the orientation of the word
 	singleton = len(liste) == 1
@@ -48,7 +48,7 @@ def calculer_score(plateau, liste, dico):
 	mot_verti = not singleton and len(set(list_co)) == 1
 
 	# Checking the first word
-	li,co = liste[0].ligne,liste[0].colonne
+	li,co = liste[0].li,liste[0].co
 	if singleton and (li,co) == (7,7):
 		print('   Place at least two letters')
 		return False,False
@@ -59,8 +59,8 @@ def calculer_score(plateau, liste, dico):
 		return False,False
 
 	# Checking the consistency of the word
-	liste_horiz = cree_liste_horiz(plateau, liste[0].ligne, liste[0].colonne)
-	liste_verti = cree_liste_verti(plateau, liste[0].ligne, liste[0].colonne)
+	liste_horiz = cree_liste_horiz(plateau, liste[0].li, liste[0].co)
+	liste_verti = cree_liste_verti(plateau, liste[0].li, liste[0].co)
 	for lettre in liste:
 		if not lettre in liste_horiz + liste_verti:
 			print('   The letters are not contiguous')
@@ -69,7 +69,7 @@ def calculer_score(plateau, liste, dico):
 	# Checking the connection of the word
 	linked = False
 	for lettre in liste:
-		li,co = lettre.ligne,lettre.colonne
+		li,co = lettre.li,lettre.co
 		if (li,co) == (7,7): linked = True
 		if li > 0 and plateau[li-1][co] and not plateau[li-1][co] in liste: linked = True
 		if co > 0 and plateau[li][co-1] and not plateau[li][co-1] in liste: linked = True
@@ -83,8 +83,8 @@ def calculer_score(plateau, liste, dico):
 	if singleton:
 		score = 0
 		mot1 = mot2 = ''
-		liste_horiz = cree_liste_horiz(plateau, liste[0].ligne, liste[0].colonne)
-		liste_verti = cree_liste_verti(plateau, liste[0].ligne, liste[0].colonne)
+		liste_horiz = cree_liste_horiz(plateau, liste[0].li, liste[0].co)
+		liste_verti = cree_liste_verti(plateau, liste[0].li, liste[0].co)
 		if len(liste_horiz) > 1:
 			sc = subscore(plateau, liste_horiz, liste)
 			mot1 = lst2str(liste_horiz)
@@ -103,7 +103,7 @@ def calculer_score(plateau, liste, dico):
 	# Calculating the score for a horizontal word
 	elif mot_horiz:
 		score = 0
-		liste_horiz = cree_liste_horiz(plateau, liste[0].ligne, liste[0].colonne)
+		liste_horiz = cree_liste_horiz(plateau, liste[0].li, liste[0].co)
 		sc = subscore(plateau, liste_horiz, liste)
 		mot = lst2str(liste_horiz)
 		if not dico.valide(mot): return False,False
@@ -111,7 +111,7 @@ def calculer_score(plateau, liste, dico):
 		score += sc
 		# Secondary vertical words
 		for lettre in liste:
-			liste_verti = cree_liste_verti(plateau, lettre.ligne, lettre.colonne)
+			liste_verti = cree_liste_verti(plateau, lettre.li, lettre.co)
 			if len(liste_verti) > 1:
 				sc = subscore(plateau, liste_verti, liste)
 				mot2 = lst2str(liste_verti)
@@ -122,7 +122,7 @@ def calculer_score(plateau, liste, dico):
 	# Calculating the score for a vertical word
 	elif mot_verti:
 		score = 0
-		liste_verti = cree_liste_verti(plateau, liste[0].ligne, liste[0].colonne)
+		liste_verti = cree_liste_verti(plateau, liste[0].li, liste[0].co)
 		sc = subscore(plateau, liste_verti, liste)
 		mot = lst2str(liste_verti)
 		if not dico.valide(mot): return False,False
@@ -130,7 +130,7 @@ def calculer_score(plateau, liste, dico):
 		score += sc
 		# Secondary horizontal words
 		for lettre in liste:
-			liste_horiz = cree_liste_horiz(plateau, lettre.ligne, lettre.colonne)
+			liste_horiz = cree_liste_horiz(plateau, lettre.li, lettre.co)
 			if len(liste_horiz) > 1:
 				sc = subscore(plateau, liste_horiz, liste)
 				mot2 = lst2str(liste_horiz)
@@ -160,12 +160,12 @@ def subscore(plateau, liste1, liste2):
 	score = 0
 	for lettre in liste1:
 		if lettre in liste2:
-			score += lettre.value * BOARD_VAL1[lettre.ligne][lettre.colonne]
-		else: score += lettre.value
+			score += lettre.val * BOARD_VAL1[lettre.li][lettre.co]
+		else: score += lettre.val
 	# Apply score multipliers
 	for lettre in liste1:
 		if lettre in liste2:
-			score *= BOARD_VAL2[lettre.ligne][lettre.colonne]
+			score *= BOARD_VAL2[lettre.li][lettre.co]
 	return score
 
 ####################################################################################

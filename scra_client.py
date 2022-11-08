@@ -2,12 +2,12 @@
 
 #######################################
 ## --- C O V I - S C R A B B L E --- ##
-## Copyright (c) Jérôme Lehuen 2020  ##
+## Copyright (c) Jérôme Lehuen 2022  ##
 #######################################
 
 #########################################################################
 ##                                                                     ##
-##   This file is part of COVI-SCRABBLE.                               ##
+##   This file is part of COVI-SCRABBLE version 1.1                    ##
 ##                                                                     ##
 ##   COVI-SCRABBLE is free software: you can redistribute it and/or    ##
 ##   modify it under the terms of the GNU General Public License as    ##
@@ -34,8 +34,8 @@ def get_data(expression, message):
 
 class Client(Abstract_client):
 
-	def __init__(self, version, hote, port, login):
-		Abstract_client.__init__(self, version, hote, port, login)
+	def __init__(self, version, hote, port, userdata):
+		Abstract_client.__init__(self, version, hote, port, userdata)
 
 	####################################
 	## Messages to send to the server ##

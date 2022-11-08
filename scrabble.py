@@ -2,12 +2,12 @@
 
 #######################################
 ## --- C O V I - S C R A B B L E --- ##
-## Copyright (c) Jérôme Lehuen 2020  ##
+## Copyright (c) Jérôme Lehuen 2022  ##
 #######################################
 
 #########################################################################
 ##                                                                     ##
-##   This file is part of COVI-SCRABBLE.                               ##
+##   This file is part of COVI-SCRABBLE version 1.1                    ##
 ##                                                                     ##
 ##   COVI-SCRABBLE is free software: you can redistribute it and/or    ##
 ##   modify it under the terms of the GNU General Public License as    ##
@@ -26,27 +26,20 @@
 ##                                                                     ##
 #########################################################################
 
-import os
 import threading
 from tkinter import *
-
-from lettre import Lettre
+from utils import *
+from constants import *
+from letter import Letter
 from scra_client import Client
 from winscore import Winscore
 from calculator import calculer_score
-from dictionary import Dictionary
-
-from constants import *
-from common import *
-from utils import *
-
-##############################
-## Class of the application ##
-##############################
+from dico.dictionary import Dictionary
 
 class Scrabble(Tk):
 
-	plateau = None  # Matrix [0..14][0..14] of letters
+	canvas = None
+	board = None    # Matrix [0..14][0..14] of letters
 	stand = None    # List of letters
 	bag = None      # Character deck
 	mot = None      # Letters of the last word
@@ -55,25 +48,28 @@ class Scrabble(Tk):
 	passwd = None   # Player Password
 	locked = True   # Player lock
 
-	def __init__(self, version, addr, port, login, dico, serverflag):
+	##########################
+	## Scrabble constructor ##
+	##########################
 
+	def __init__(self, VERSION, LANG, addr, port, userdata, serverflag):
 		super().__init__()
 
-		self.login = login
-		self.title('C O V I   S C R A B B L E  %d.%d  –  %s' % (version[0], version[1], login))
+		self.LANG = LANG
+		self.login = userdata[0]
+		self.title('C O V I S C R A B B L E  %d.%d  –  %s' % (VERSION[0], VERSION[1], self.login))
 		self.resizable(False, False)
 
-		self.fond = PhotoImage(file=BOARD_IMG)
-		self.canvas = Canvas(self, width=CANVAS_WIDTH, height=CANVAS_HEIGHT)
-		self.canvas.create_image(BOARD_WIDTH, BOARD_HEIGHT, image=self.fond)
-		self.canvas.create_rectangle(STAND_X0, STAND_Y0, STAND_X1, STAND_Y1, fill='green', width=0)
-		self.canvas.pack(side=TOP)
+		# Create the board
+		self.build_board()
 
-		if serverflag: Button(self, text='  Start Game  ', bg='lightgreen', command=self.restart).pack(side=LEFT, padx=10, pady=10)
-#		Button(self, text='  Nouvelle distribution  ', bg='lightgreen', command=self.newdeal).pack(side=LEFT, padx=10, pady=10)
-		Button(self, text='  Exit Game  ', bg='lightgreen', command=quit).pack(side=RIGHT, padx=10, pady=10)
-		self.btn_valider = Button(self, text='  Validate  ', state=DISABLED, bg='lightgreen', command=self.valider)
-		self.btn_valider.pack(side=BOTTOM, padx=10, pady=10)
+		# Create the buttons
+		MARGIN = 10
+		if serverflag: Button(self, text='  Start Game  ', command=self.restart).pack(side=LEFT, padx=MARGIN, pady=MARGIN)
+		Button(self, text='  Exit Game  ', command=quit).pack(side=RIGHT, padx=MARGIN, pady=MARGIN)
+		self.btn_valider = Button(self, text='  Validate  ', state=DISABLED, command=self.valider)
+		self.btn_valider.pack(side=BOTTOM, padx=MARGIN, pady=MARGIN)
+
 		center(self)
 
 		# Create the score window
@@ -81,19 +77,43 @@ class Scrabble(Tk):
 		self.update_winscore_position()
 		self.bind('<Configure>', self.dragging)
 
-		# Initialize game board and stand
-		self.plateau = [[None] * 15 for _ in range(15)]
+		# Initialize the board and the stand models
+		self.board = [[None] * 15 for _ in range(15)]
 		self.stand = []
 		self.mot = []
 
 		# Load the dictionary
-		self.dico = Dictionary(dico)
+		name = 'dico_%s' % LANG
+		self.dico = Dictionary(name)
 
 		# Launch the client
-		self.client = Client(version, addr, port, self.login)
+		self.client = Client(VERSION, addr, port, userdata)
 		client_thread = threading.Thread(target=self.client.run)
 		client_thread.daemon = True
 		client_thread.start()
+
+	def build_board(self):
+		self.canvas = Canvas(self, width=BOARD_WIDTH-4, height=TOTAL_HEIGHT-4)
+		# Draw the board
+		for li in range(15):
+			for co in range(15):
+				x = co * WIDTH
+				y = li * HEIGHT
+				if   BOARD_VAL1[li][co] == 2: color = COLOR_BLUE1
+				elif BOARD_VAL1[li][co] == 3: color = COLOR_BLUE2
+				elif BOARD_VAL2[li][co] == 2: color = COLOR_RED1
+				elif BOARD_VAL2[li][co] == 3: color = COLOR_RED2
+				else: color = COLOR_NONE
+				self.canvas.create_rectangle(x, y, x+WIDTH, y+HEIGHT, fill=color, width=3, outline='white')
+		# Draw the stand
+		self.canvas.create_rectangle(0, BOARD_HEIGHT, BOARD_WIDTH, TOTAL_HEIGHT, fill='green', width=3, outline='white')
+		self.canvas.create_line(0, BOARD_HEIGHT + HEIGHT, BOARD_WIDTH, BOARD_HEIGHT + HEIGHT, fill=COLOR_LINE)
+		self.canvas.create_line(0, BOARD_HEIGHT + 2*HEIGHT, BOARD_WIDTH, BOARD_HEIGHT + 2*HEIGHT, fill=COLOR_LINE)
+		self.canvas.pack(side=TOP)
+
+	#####################
+	## Private methods ##
+	#####################
 
 	def dragging(self, event):
 		# https://stackoverflow.com/questions/45183914/tkinter-detecting-a-window-drag-event
@@ -106,27 +126,30 @@ class Scrabble(Tk):
 		self.winscore.geometry('+%d+%d' % (x,y))
 		self.winscore.lift() # In the foreground
 
+	def restart(self):
+		self.client.restart()
+
 	############################################
 	## Model methods (not a real MVC pattern) ##
 	############################################
 
-	def libre(self, ligne, colonne):
-	 	return self.plateau[ligne][colonne] is None
+	def free(self, li, co):
+	 	return self.board[li][co] is None
 
-	def deposer(self, lettre, ligne, colonne):
-		self.plateau[ligne][colonne] = lettre # Add to the board
-		self.stand.remove(lettre) # Remove from the stand
-		self.mot.append(lettre) # To count the points
-		self.client.put(lettre.key, ligne, colonne, lettre.jocker)
+	def put(self, letter, li, co):
+		self.board[li][co] = letter # Add to the board
+		self.stand.remove(letter) # Remove from the stand
+		self.mot.append(letter) # To count the points
+		self.client.put(letter.key, li, co, letter.jocker)
 
-	def reprendre(self, lettre):
-		self.plateau[lettre.ligne][lettre.colonne] = None # Remove from the board
-		self.stand.append(lettre) # Add to the stand
-		self.mot.remove(lettre) # To count the points
-		self.client.get(lettre.ligne, lettre.colonne)
+	def get(self, letter):
+		self.board[letter.li][letter.co] = None # Remove from the board
+		self.stand.append(letter) # Add to the stand
+		self.mot.remove(letter) # To count the points
+		self.client.get(letter.li, letter.co)
 
 	def calculer_score(self):
-		return calculer_score(self.plateau, self.mot, self.dico)
+		return calculer_score(self.board, self.mot, self.dico)
 
 	def valider(self):
 		self.btn_valider.configure(state=DISABLED)
@@ -138,27 +161,24 @@ class Scrabble(Tk):
 		else:
 			self.btn_valider.configure(state=NORMAL)
 
-	def restart(self):
-		self.client.restart()
-
 	def clear_canvas(self):
 		# Delete letters from the stand
-		for lettre in self.stand: lettre.delete()
+		for letter in self.stand: letter.delete()
 		# Delete letters from the board
-		for ligne in range(15):
-			for colonne in range(15):
-				lettre = self.plateau[ligne][colonne]
-				if lettre: lettre.delete()
+		for li in range(15):
+			for co in range(15):
+				letter = self.board[li][co]
+				if letter: letter.delete()
 
 	def lock_all_letters(self):
-		for ligne in range(15):
-			for colonne in range(15):
-				lettre = self.plateau[ligne][colonne]
-				if lettre: lettre.lock()
+		for li in range(15):
+			for co in range(15):
+				letter = self.board[li][co]
+				if letter: letter.lock()
 
-	#############################
-	## Methods from the server ##
-	#############################
+	#####################################
+	## Methods invoked from the server ##
+	#####################################
 
 	def pool(self):
 		# To consult the client every 500 ms
@@ -167,33 +187,28 @@ class Scrabble(Tk):
 
 	def async_put(self, key, li, co, jocker):
 		if jocker:
-			lettre = Lettre(self, self.canvas, ' ').setKey(key)
+			letter = Letter(' ', li, co, self).setKey(key)
 		else:
-			lettre = Lettre(self, self.canvas, key)
-		self.plateau[li][co] = lettre
-		# The position on the board
-		x = co * L0 + L0 // 2 + X0
-		y = li * H0 + H0 // 2 + Y0
-		lettre.replace(x, y)
-		lettre.redraw()
-		lettre.lock()
+			letter = Letter(key, li, co, self)
+		self.board[li][co] = letter
+		letter.lock()
 
 	def async_get(self, li, co):
-		lettre = self.plateau[li][co]
-		self.plateau[li][co] = None
-		lettre.delete()
+		letter = self.board[li][co]
+		self.board[li][co] = None
+		letter.delete()
 
 	def async_score(self, login, mot, score):
 		#print('Score of %s for %s = %d' % (login, mot, score))
 		self.winscore.newscore(login, mot, score)
 
 	def async_addstand(self, liste):
-		for key in liste:
-			self.stand.append(Lettre(self, self.canvas, key))
-		# Reposition the letters on the stand
-		for i,lettre in enumerate(self.stand):
-			lettre.replace((L0 + 10) * i + X0, STAND_Y + 10)
-			lettre.redraw()
+		# Reposition the old letters
+		for i,letter in enumerate(self.stand):
+			letter.setLC(16, i+4)
+		# Position the new letters
+		for i,key in enumerate(liste):
+			self.stand.append(Letter(key, 17, i+4, self))
 
 	def async_player(self, login):
 		if login == self.login:
@@ -207,7 +222,7 @@ class Scrabble(Tk):
 	def async_restart(self):
 		self.clear_canvas()
 		self.winscore.reset()
-		self.plateau = [[None] * 15 for _ in range(15)]
+		self.board = [[None] * 15 for _ in range(15)]
 		self.stand = []
 		self.mot = []
 

@@ -2,12 +2,12 @@
 
 #######################################
 ## --- C O V I - S C R A B B L E --- ##
-## Copyright (c) Jérôme Lehuen 2020  ##
+## Copyright (c) Jérôme Lehuen 2022  ##
 #######################################
 
 #########################################################################
 ##                                                                     ##
-##   This file is part of COVI-SCRABBLE.                               ##
+##   This file is part of COVI-SCRABBLE version 1.1                    ##
 ##                                                                     ##
 ##   COVI-SCRABBLE is free software: you can redistribute it and/or    ##
 ##   modify it under the terms of the GNU General Public License as    ##
@@ -35,6 +35,7 @@ EOD = '$$' # End of data
 class Abstract_client(ABC):
 
 	login = None
+	passwd = None
 	serveur = None # Le socket du serveur
 	queue = queue.Queue() # File d'attente des messages
 
@@ -43,9 +44,10 @@ class Abstract_client(ABC):
 	#################
 
 	@abstractmethod
-	def __init__(self, version, hote, port, login):
-		self.login = login
+	def __init__(self, version, hote, port, userdata):
 		self.version = version
+		self.login = userdata[0]
+		self.passwd = userdata[1]
 		self.serveur = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		try:
 			self.serveur.connect((hote, port))
@@ -98,7 +100,7 @@ class Abstract_client(ABC):
 				self.send(reponse)
 
 			elif message == 'password':
-				reponse = 'password:%s' % self.login
+				reponse = 'password:%s' % self.passwd
 				self.send(reponse)
 
 			elif message == 'welcome': break # Valid handcheck
@@ -122,4 +124,3 @@ class Abstract_client(ABC):
 				self.queue.put(message)
 
 		self.serveur.close()
-
