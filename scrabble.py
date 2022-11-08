@@ -27,12 +27,14 @@
 #########################################################################
 
 import threading
+
 from tkinter import *
 from utils import *
 from constants import *
 from letter import Letter
 from scra_client import Client
 from winscore import Winscore
+from polygon import pentagram
 from calculator import calculer_score
 from dico.dictionary import Dictionary
 
@@ -105,6 +107,8 @@ class Scrabble(Tk):
 				elif BOARD_VAL2[li][co] == 3: color = COLOR_RED2
 				else: color = COLOR_NONE
 				self.canvas.create_rectangle(x, y, x+WIDTH, y+HEIGHT, fill=color, width=3, outline='white')
+		# Draw the pentagram
+		self.canvas.create_polygon(pentagram(WIDTH // 2.5, BOARD_WIDTH // 2, BOARD_HEIGHT // 2))
 		# Draw the stand
 		self.canvas.create_rectangle(0, BOARD_HEIGHT, BOARD_WIDTH, TOTAL_HEIGHT, fill='green', width=3, outline='white')
 		self.canvas.create_line(0, BOARD_HEIGHT + HEIGHT, BOARD_WIDTH, BOARD_HEIGHT + HEIGHT, fill=COLOR_LINE)

@@ -26,12 +26,25 @@
 ##                                                                     ##
 #########################################################################
 
+import math
 from tkinter import *
 
 def pairwise(iterable):
 	# s -> (s0, s1), (s2, s3), etc.
 	a = iter(iterable)
 	return zip(a, a)
+
+def pentagram(r1, x, y):
+	r2 = r1 // 2.5
+	polygon = []
+	for i in range(5):
+		x1 = x + r1 * math.cos(math.radians(54 + i * 72))
+		y1 = y + r1 * math.sin(math.radians(54 + i * 72))
+		x2 = x + r2 * math.cos(math.radians(90 + i * 72))
+		y2 = y + r2 * math.sin(math.radians(90 + i * 72))
+		polygon.append([x1,y1])
+		polygon.append([x2,y2])
+	return polygon
 
 class RoundedPolygon():
 
