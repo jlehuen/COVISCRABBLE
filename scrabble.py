@@ -52,7 +52,7 @@ class Scrabble(Tk):
 	## Scrabble constructor ##
 	##########################
 
-	def __init__(self, VERSION, LANG, addr, port, userdata, serverflag):
+	def __init__(self, VERSION, LANG, addr, port, userdata):
 		super().__init__()
 
 		self.LANG = LANG
@@ -65,7 +65,7 @@ class Scrabble(Tk):
 
 		# Create the buttons
 		MARGIN = 10
-		if serverflag: Button(self, text='  Start Game  ', command=self.restart).pack(side=LEFT, padx=MARGIN, pady=MARGIN)
+		Button(self, text='  Start Game  ', command=self.restart).pack(side=LEFT, padx=MARGIN, pady=MARGIN)
 		Button(self, text='  Exit Game  ', command=quit).pack(side=RIGHT, padx=MARGIN, pady=MARGIN)
 		self.btn_valider = Button(self, text='  Validate  ', state=DISABLED, command=self.valider)
 		self.btn_valider.pack(side=BOTTOM, padx=MARGIN, pady=MARGIN)

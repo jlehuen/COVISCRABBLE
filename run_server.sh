@@ -32,4 +32,4 @@ kill -9 $(lsof -ti tcp:$PORT) &> /dev/null
 cd "$(dirname "$0")"
 export BASE=$(pwd)
 
-python3 main.py -fr -serv $PORT database
+python3 main_server.py -fr -port $PORT -data database

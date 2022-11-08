@@ -26,24 +26,13 @@
 ##                                                                     ##
 #########################################################################
 
-import threading
-import time, sys, os
+import threading, sys
 
 from utils import *
-from scrabble import Scrabble
 from scra_server import Serveur
 
 VERSION = (1,1)
 LANG = 'EN' # Default language
-
-def start_server(port, filename):
-	file = __import__(filename)
-	userdico = file.USERS
-	serveur = Serveur(VERSION, LANG, port, userdico)
-	serveur_thread = threading.Thread(target=serveur.run)
-	serveur_thread.daemon = True
-	serveur_thread.start()
-	time.sleep(1)
 
 ###################
 ## Main function ##
@@ -61,37 +50,16 @@ def main():
 	for i,arg in enumerate(sys.argv):
 		if arg == '-fr': LANG = 'FR'
 		if arg == '-en': LANG = 'EN'
-		if arg == '-serv':
-			# Server mode
-			addr = 'localhost'
-			port = int(sys.argv[i+1])
-			name = sys.argv[i+2]
-			flag = True
-		if arg == '-host':
-			# Client mode
-			addr = sys.argv[i+1]
-			port = int(sys.argv[i+2])
-			flag = False
+		if arg == '-data': filename = sys.argv[i+1]
+		if arg == '-port': port = int(sys.argv[i+1])
 
-	if flag: start_server(port, name)
+	file = __import__(filename)
+	userdico = file.USERS
+	serveur = Serveur(VERSION, LANG, port, userdico)
 
-	# Splash screen
-	splash = Tk()
-	splash.title('C O V I S C R A B B L E  %d.%d' % VERSION)
-	splash.resizable(False, False)
-	image = PhotoImage(file='img/splash.png')
-	Label(splash, image=image).pack()
-	center(splash)
-
-	# Identification dialog
-	ident = Identification(splash)
-	userdata = (ident.login, ident.passwd)
-	splash.destroy()
-
-	# Opening the main window
-	root = Scrabble(VERSION, LANG, addr, port, userdata, flag)
-	root.after(1000, root.pool) # Start pooling for asynchronous messages
-	root.mainloop()
+	serveur_thread = threading.Thread(target=serveur.run)
+	serveur_thread.daemon = False
+	serveur_thread.start()
 
 if __name__ == '__main__':
 	main()

@@ -26,7 +26,50 @@
 ##                                                                     ##
 #########################################################################
 
-cd "$(dirname "$0")"
-export BASE=$(pwd)
+import threading, sys
 
-python3 main_client.py -fr -host localhost -port 1234
+from utils import *
+from scrabble import Scrabble
+
+VERSION = (1,1)
+LANG = 'EN' # Default language
+
+###################
+## Main function ##
+###################
+
+def main():
+	banner('C O V I S C R A B B L E')
+
+	# Checking the Python version
+	if sys.version_info < (3,0):
+		print('Python 3.x required')
+		sys.exit(1)
+
+	# Reading the command line args
+	for i,arg in enumerate(sys.argv):
+		if arg == '-fr': LANG = 'FR'
+		if arg == '-en': LANG = 'EN'
+		if arg == '-host': addr = sys.argv[i+1]
+		if arg == '-port': port = int(sys.argv[i+1])
+
+	# Splash screen
+	splash = Tk()
+	splash.title('C O V I S C R A B B L E  %d.%d' % VERSION)
+	splash.resizable(False, False)
+	image = PhotoImage(file='img/splash.png')
+	Label(splash, image=image).pack()
+	center(splash)
+
+	# Identification dialog
+	ident = Identification(splash)
+	userdata = (ident.login, ident.passwd)
+	splash.destroy()
+
+	# Opening the main window
+	root = Scrabble(VERSION, LANG, addr, port, userdata)
+	root.after(1000, root.pool) # Start pooling for asynchronous messages
+	root.mainloop()
+
+if __name__ == '__main__':
+	main()
