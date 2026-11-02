@@ -110,13 +110,14 @@ jobs:
           body: |
             ### 🎮 COVI-SCRABBLE ${{ github.ref_name }}
 
-            Exécutables autonomes prêts à l'emploi (Zero-Install) :
+            Standalone, zero-install executables ready to play:
 
-            - **macOS** : `coviscrabble-macos.zip` (Application double-cliquable)
-            - **Windows** : `coviscrabble-windows.zip` (Exécutable `.exe` autonome)
-            - **Linux** : `coviscrabble-linux.tar.gz` (Binaires exécutables autonomes)
+            - **macOS**: `coviscrabble-macos.zip` (Double-clickable application bundle)
+            - **Windows**: `coviscrabble-windows.zip` (Standalone `.exe` executable)
+            - **Linux**: `coviscrabble-linux.tar.gz` (Standalone binary package)
 
-            #### 🚀 Pour jouer :
-            1. Téléchargez l'archive correspondant à votre système ci-dessous.
-            2. Décompressez l'archive.
-            3. Double-cliquez sur `CoviScrabble` (Client) pour jouer, ou `CoviScrabble-Server` pour héberger une partie.
+            #### 🚀 Quick Start:
+            1. Download the archive corresponding to your operating system below.
+            2. Extract the archive.
+            3. Double-click on `CoviScrabble` (Client) to play, or `CoviScrabble-Server` to host a game.
+            4. Check `QUICKSTART.txt` inside the archive for connection details and preconfigured test accounts (`toto`/`toto`, `titi`/`titi`).

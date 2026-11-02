@@ -1,70 +1,27 @@
 ================================================================================
                       C O V I - S C R A B B L E
-                    GUIDE DE DEMARRAGE RAPIDE / QUICKSTART
+                           QUICKSTART GUIDE
 ================================================================================
-
-[FRANCAIS]
-
-Bienvenue sur COVI-SCRABBLE !
-Ce jeu de Scrabble multijoueur fonctionne selon une architecture Client/Serveur.
-Aucune installation de Python n'est requise pour jouer.
-
---------------------------------------------------------------------------------
-1. LANCER UNE PARTIE LOCALE (SUR LE MEME ORDINATEUR)
---------------------------------------------------------------------------------
-1. Lancez d'abord le SERVEUR :
-   - Double-cliquez sur "CoviScrabble-Server" (ou lancez-le dans un terminal).
-   - Une fenetre console s'ouvre indiquant que le serveur ecoute sur le port 1234.
-   - Laissez cette fenetre ouverte en arriere-plan.
-
-2. Lancez le CLIENT pour chaque joueur :
-   - Double-cliquez sur "CoviScrabble".
-   - Une fenetre d'identification s'affiche.
-   - Identifiants de test preconfigures :
-       * Joueur 1 : Login = toto   |   Mot de passe = toto
-       * Joueur 2 : Login = titi   |   Mot de passe = titi
-   - Cliquez sur OK pour valider la connexion.
-
-3. Jouez :
-   - Sur l'un des clients, cliquez sur le bouton "Start Game".
-   - 7 lettres sont distribuees a chaque joueur.
-   - Le joueur actif a ses tuiles deverrouillees.
-   - Glissez-deposez vos lettres sur le plateau (le premier mot doit obligatoirement
-     recouvrir l'etoile centrale au milieu du plateau).
-   - Cliquez sur "Validate" pour valider votre coup et passer le tour.
-
---------------------------------------------------------------------------------
-2. JOUER EN RESEAU (ENTRE DEUX ORDINATEURS)
---------------------------------------------------------------------------------
-- L'ordinateur hote lance "CoviScrabble-Server" et note son adresse IP locale
-  (affichee dans la console du serveur, ex: 192.168.1.25).
-- Les autres joueurs lancent "CoviScrabble" en lui indiquant l'IP de l'hote :
-    * Sur Windows : CoviScrabble.exe -host 192.168.1.25 -port 1234
-    * Sur macOS   : ./CoviScrabble -host 192.168.1.25 -port 1234
-
-
-================================================================================
-[ENGLISH]
 
 Welcome to COVI-SCRABBLE!
-This networked multiplayer Scrabble game uses a Client/Server architecture.
-No Python installation is required to play.
+This is a networked multiplayer Scrabble game using a Client/Server architecture.
+No Python installation is required on your computer to play.
 
 --------------------------------------------------------------------------------
-1. STARTING A LOCAL GAME (ON THE SAME COMPUTER)
+1. PLAYING A LOCAL GAME (ON THE SAME COMPUTER)
 --------------------------------------------------------------------------------
 1. First, start the SERVER:
-   - Double-click on "CoviScrabble-Server".
-   - A console window will open confirming the server is listening on port 1234.
+   - Double-click on "CoviScrabble-Server" (or run it in a terminal).
+   - A console window opens confirming that the server is listening on port 1234.
    - Keep this window running in the background.
 
 2. Start the CLIENT for each player:
    - Double-click on "CoviScrabble".
-   - The login prompt will appear.
+   - The identification prompt will appear.
    - Pre-configured test credentials:
        * Player 1: Login = toto   |   Password = toto
        * Player 2: Login = titi   |   Password = titi
-   - Click OK to authenticate and connect.
+   - Click "OK" to authenticate and connect.
 
 3. Play:
    - Click "Start Game" on either client.
@@ -74,15 +31,33 @@ No Python installation is required to play.
    - Click "Validate" to submit your word, score points, and pass the turn.
 
 --------------------------------------------------------------------------------
-2. PLAYING OVER A NETWORK (BETWEEN MULTIPLE COMPUTERS)
+2. PLAYING OVER A LOCAL NETWORK (BETWEEN MULTIPLE COMPUTERS)
 --------------------------------------------------------------------------------
-- The host computer starts "CoviScrabble-Server" and notes its local IP address
-  (displayed in the server console, e.g. 192.168.1.25).
-- Players connect to the host by passing its IP address:
-    * On Windows: CoviScrabble.exe -host 192.168.1.25 -port 1234
-    * On macOS:   ./CoviScrabble -host 192.168.1.25 -port 1234
+1. The host starts "CoviScrabble-Server" and notes their local IP address
+   (displayed in the server console, e.g. 192.168.1.25).
+
+2. Other players connect to the host by specifying its IP address:
+   * On Windows (Command Prompt / PowerShell):
+       CoviScrabble.exe -host 192.168.1.25 -port 1234
+   * On macOS (Terminal):
+       ./CoviScrabble -host 192.168.1.25 -port 1234
+   * On Linux:
+       ./CoviScrabble -host 192.168.1.25 -port 1234
+
+--------------------------------------------------------------------------------
+3. COMMAND LINE OPTIONS
+--------------------------------------------------------------------------------
+* Client:
+    -host <address> : Server IP address or hostname (default: localhost)
+    -port <number>  : Server TCP port (default: 1234)
+    -fr / -en       : UI language (default: EN)
+
+* Server:
+    -port <number>  : Listening TCP port (default: 1234)
+    -fr / -en       : Dictionary and letter bag language (default: EN)
+    -data <module>  : User credentials module (default: database)
 
 ================================================================================
-Depot GitHub officiel : https://github.com/jlehuen/COVISCRABBLE
-Licence : GNU General Public License v3 (GPLv3)
+Official GitHub Repository: https://github.com/jlehuen/COVISCRABBLE
+License: GNU General Public License v3 (GPLv3)
 ================================================================================
