@@ -1,3 +1,7 @@
+<p align="right">
+  🌐 <strong>Français</strong> &nbsp;|&nbsp; <a href="README.en.md">English</a>
+</p>
+
 <div align="center">
 
 # C O V I - S C R A B B L E
