@@ -87,6 +87,7 @@ coviscrabble/
 ├── run_server.command     # Lanceur macOS double-cliquable (serveur)
 ├── run_client.command     # Lanceur macOS double-cliquable (client)
 ├── test_core.py           # Suite de tests unitaires automatisés
+├── QUICKSTART.txt         # Guide de démarrage rapide embarqué dans les releases
 ├── specs_server.py        # Serveur web local embarqué pour le dashboard OpenSpec
 ├── specs.html             # Tableau de bord HTML5 généré d'OpenSpec
 │

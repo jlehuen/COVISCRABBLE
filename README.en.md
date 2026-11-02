@@ -87,6 +87,7 @@ coviscrabble/
 ├── run_server.command     # macOS double-clickable launcher (server)
 ├── run_client.command     # macOS double-clickable launcher (client)
 ├── test_core.py           # Automated unit test suite
+├── QUICKSTART.txt         # Quickstart guide bundled into all releases
 ├── specs_server.py        # Embedded local web server for OpenSpec dashboard
 ├── specs.html             # Pre-built HTML5 OpenSpec dashboard
 │

@@ -60,6 +60,13 @@ def build():
     ]
     subprocess.check_call(server_args, cwd=BASE_DIR)
 
+    # 3. Copie du guide de démarrage rapide QUICKSTART.txt dans dist/
+    quickstart_src = os.path.join(BASE_DIR, "QUICKSTART.txt")
+    quickstart_dst = os.path.join(dist_dir, "QUICKSTART.txt")
+    if os.path.exists(quickstart_src):
+        print("\n[3/3] Copie de QUICKSTART.txt dans dist/...")
+        shutil.copy2(quickstart_src, quickstart_dst)
+
     print("\n=== Compilation terminée avec succès dans le dossier 'dist/' ===")
 
 if __name__ == '__main__':
