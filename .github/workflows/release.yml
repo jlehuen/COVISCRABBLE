@@ -49,7 +49,7 @@ jobs:
 
       - name: Run unit tests
         run: |
-          python test_core.py
+          python -m unittest discover -s tests
 
       - name: Build standalone binaries
         run: |

@@ -8,9 +8,13 @@ import unittest
 import os
 import sys
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, BASE_DIR)
-sys.path.insert(0, os.path.join(BASE_DIR, 'openspec'))
+TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_DIR = os.path.dirname(TESTS_DIR)
+SRC_DIR = os.path.join(PROJECT_DIR, 'src')
+OPENSPEC_DIR = os.path.join(PROJECT_DIR, 'openspec')
+
+sys.path.insert(0, SRC_DIR)
+sys.path.insert(0, OPENSPEC_DIR)
 
 from utils import sha256
 from database import USERS
@@ -40,7 +44,7 @@ class TestCoviScrabbleCore(unittest.TestCase):
 
     def test_openspec_specifications(self):
         """Vérifie la conformité de l'arbre OpenSpec et l'intégrité des exigences vivantes."""
-        data = get_openspec_data(BASE_DIR)
+        data = get_openspec_data(PROJECT_DIR)
         self.assertIsNotNone(data)
         self.assertEqual(data['config']['name'], 'coviscrabble')
         self.assertEqual(data['total_requirements'], 8)

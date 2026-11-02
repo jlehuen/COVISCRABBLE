@@ -44,7 +44,14 @@ def resource_path(relative_path):
 	if hasattr(sys, '_MEIPASS'):
 		return os.path.join(sys._MEIPASS, relative_path)
 	base_dir = os.path.dirname(os.path.abspath(__file__))
-	return os.path.join(base_dir, relative_path)
+	candidate = os.path.join(base_dir, relative_path)
+	if os.path.exists(candidate):
+		return candidate
+	root_dir = os.path.dirname(base_dir)
+	candidate_root = os.path.join(root_dir, relative_path)
+	if os.path.exists(candidate_root):
+		return candidate_root
+	return candidate
 
 ######################################
 ## Screen size and window centering ##

@@ -72,48 +72,55 @@ Le projet combine un moteur réseau TCP robuste, une interface graphique vectori
 
 ```text
 coviscrabble/
-├── main_server.py         # Point d'entrée du serveur de jeu
-├── main_client.py         # Point d'entrée du client joueur
-├── scrabble.py            # Fenêtre principale IHM Tkinter & logique de plateau
-├── letter.py              # Classe Tuile (drag-and-drop, snapping, jokers)
-├── polygon.py             # Dessin géométrique vectoriel (étoile centrale)
-├── winscore.py            # Fenêtre satellite d'affichage des scores
-├── calculator.py          # Moteur d'arbitrage et calcul des scores Scrabble
-├── constants.py           # Règles, dimensions, sacs de lettres FR/EN et grilles bonus
-├── database.py            # Référentiel des utilisateurs et mots de passe SHA-256
-├── utils.py               # Boîte à outils (centrage Tkinter, bannière, SHA-256)
-├── run_server.sh          # Script shell de lancement rapide du serveur
-├── run_client.sh          # Script shell de lancement rapide du client
-├── run_server.command     # Lanceur macOS double-cliquable (serveur)
-├── run_client.command     # Lanceur macOS double-cliquable (client)
-├── test_core.py           # Suite de tests unitaires automatisés
-├── QUICKSTART.txt         # Guide de démarrage rapide embarqué dans les releases
-├── specs_server.py        # Serveur web local embarqué pour le dashboard OpenSpec
-├── specs.html             # Tableau de bord HTML5 généré d'OpenSpec
+├── src/                       # 🌟 Code source applicatif
+│   ├── main_client.py         # Point d'entrée du client joueur
+│   ├── main_server.py         # Point d'entrée du serveur de jeu
+│   ├── scrabble.py            # Fenêtre principale IHM Tkinter & logique de plateau
+│   ├── letter.py              # Classe Tuile (drag-and-drop, snapping, jokers)
+│   ├── polygon.py             # Dessin géométrique vectoriel (étoile centrale)
+│   ├── winscore.py            # Fenêtre satellite d'affichage des scores
+│   ├── calculator.py          # Moteur d'arbitrage et calcul des scores Scrabble
+│   ├── constants.py           # Règles, dimensions, sacs de lettres FR/EN et grilles bonus
+│   ├── database.py            # Référentiel des utilisateurs et mots de passe SHA-256
+│   ├── utils.py               # Boîte à outils (centrage Tkinter, bannière, SHA-256, paths)
+│   ├── scra_client.py         # Spécialisation client pour les commandes Scrabble
+│   ├── scra_server.py         # Spécialisation serveur pour les règles de Scrabble
+│   │
+│   ├── socketlib/             # Bibliothèque réseau générique réutilisable
+│   │   ├── abstract_serveur.py # Serveur TCP multithreadé, handshake & broadcast
+│   │   └── abstract_client.py  # Client TCP, thread d'écoute & file asynchrone
+│   │
+│   ├── dico/                  # Moteurs lexicographiques et listes de mots
+│   │   ├── dictionary.py      # Arbre préfixe (Trie) et gestion du cache .dic
+│   │   ├── dico_fr.txt        # Dictionnaire officiel de référence (Français)
+│   │   └── dico_en.txt        # Dictionnaire officiel de référence (Anglais)
+│   │
+│   └── img/                   # Ressources graphiques et illustrations
+│       ├── board.png          # Capture de plateau
+│       ├── splash.png         # Écran d'accueil (Splash screen)
+│       └── gameover.png       # Écran de fin de partie
 │
-├── socketlib/             # Bibliothèque réseau générique réutilisable
-│   ├── abstract_serveur.py # Serveur TCP multithreadé, handshake & broadcast
-│   └── abstract_client.py  # Client TCP, thread d'écoute & file asynchrone
+├── tests/                     # 🧪 Suite de tests unitaires automatisés
+│   └── test_core.py
 │
-├── scra_server.py         # Spécialisation serveur pour les règles de Scrabble
-├── scra_client.py         # Spécialisation client pour les commandes Scrabble
+├── build_dist.py              # Packaging multiplateforme PyInstaller (CI & local)
+├── QUICKSTART.txt             # Guide de démarrage rapide embarqué dans les releases
+├── specs_server.py            # Serveur web local embarqué pour le dashboard OpenSpec
+├── specs.html                 # Tableau de bord HTML5 généré d'OpenSpec
+├── run_server.sh / .bat       # Scripts de lancement rapide du serveur
+├── run_client.sh / .bat       # Scripts de lancement rapide du client
+├── run_server.command         # Lanceur macOS double-cliquable (serveur)
+├── run_client.command         # Lanceur macOS double-cliquable (client)
 │
-├── dico/                  # Moteurs lexicographiques et listes de mots
-│   ├── dictionary.py      # Arbre préfixe (Trie) et gestion du cache .dic
-│   ├── dico_fr.txt        # Dictionnaire officiel de référence (Français)
-│   └── dico_en.txt        # Dictionnaire officiel de référence (Anglais)
+├── .github/workflows/         # Intégration continue & Déploiement (CI/CD)
+│   └── release.yml            # Compilation automatique multiplateforme des releases
 │
-├── img/                   # Ressources graphiques et illustrations
-│   ├── board.png          # Capture de plateau
-│   ├── splash.png         # Écran d'accueil (Splash screen)
-│   └── gameover.png       # Écran de fin de partie
-│
-└── openspec/              # Spécifications formelles OpenSpec (SDD)
-    ├── config.yaml        # Configuration générale du projet
-    ├── specs/             # Exigences vivantes (coviscrabble.md)
-    ├── changes/           # Traçabilité des évolutions (proposal, design, tasks)
-    ├── openspec_parser.py # Parseur universel temps réel sans dépendance
-    └── render_html.py     # Générateur du dashboard HTML5 autonome
+└── openspec/                  # Spécifications formelles OpenSpec (SDD)
+    ├── config.yaml            # Configuration générale du projet
+    ├── specs/                 # Exigences vivantes (coviscrabble.md)
+    ├── changes/               # Traçabilité des évolutions (proposal, design, tasks)
+    ├── openspec_parser.py     # Parseur universel temps réel sans dépendance
+    └── render_html.py         # Générateur du dashboard HTML5 autonome
 ```
 
 ---
@@ -136,7 +143,7 @@ Dans un premier terminal :
 
 ```bash
 # Lancement direct en français sur le port 1234
-python3 main_server.py -fr -port 1234 -data database
+python3 src/main_server.py -fr -port 1234 -data database
 
 # Ou via le script fourni :
 ./run_server.sh
@@ -155,7 +162,7 @@ Dans un second terminal (pour chaque joueur) :
 
 ```bash
 # Connexion au serveur local
-python3 main_client.py -fr -host localhost -port 1234
+python3 src/main_client.py -fr -host localhost -port 1234
 
 # Ou via le script fourni :
 ./run_client.sh
@@ -188,7 +195,7 @@ Une fenêtre d'identification s'affiche au démarrage.
 Une suite de tests unitaires valide l'intégrité de la cryptographie, des dictionnaires lexicographiques FR/EN et de l'arbre OpenSpec :
 
 ```bash
-python3 test_core.py
+python3 -m unittest discover -s tests
 ```
 
 Résultat attendu :

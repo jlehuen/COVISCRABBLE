@@ -10,5 +10,6 @@
 - [x] Rédiger la documentation bilingue (`README.md` et `README.en.md`)
 - [x] Développer le script de packaging universel PyInstaller (`build_dist.py`)
 - [x] Sécuriser le chargement des ressources bundle (`resource_path`)
+- [x] Migrer l'arborescence selon le standard `src-layout` (`src/` applicatif et `tests/`)
 - [x] Ajouter le workflow CI/CD GitHub Actions pour les releases multiplateformes autonomes (`.github/workflows/release.yml`)
 - [x] Fournir les lanceurs Windows (`run_client.bat`, `run_server.bat`)

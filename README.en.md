@@ -72,47 +72,54 @@ The project combines a robust TCP network engine, a smooth vector GUI using Tkin
 
 ```text
 coviscrabble/
-├── main_server.py         # Entry point for the game server
-├── main_client.py         # Entry point for the player client
-├── scrabble.py            # Main GUI window (Tkinter) & board logic
-├── letter.py              # Tile class (drag-and-drop, snapping, jokers)
-├── polygon.py             # Vector geometric drawing (center star)
-├── winscore.py            # Score companion window
-├── calculator.py          # Scrabble adjudication & score calculation engine
-├── constants.py           # Game rules, dimensions, letter bags (FR/EN) & multipliers
-├── database.py            # User credentials repository with SHA-256 hashes
-├── utils.py               # Utility helpers (centering, banner, SHA-256)
-├── run_server.sh          # Server quick start shell script
-├── run_client.sh          # Client quick start shell script
-├── run_server.command     # macOS double-clickable launcher (server)
-├── run_client.command     # macOS double-clickable launcher (client)
-├── test_core.py           # Automated unit test suite
-├── QUICKSTART.txt         # Quickstart guide bundled into all releases
-├── specs_server.py        # Embedded local web server for OpenSpec dashboard
-├── specs.html             # Pre-built HTML5 OpenSpec dashboard
+├── src/                       # 🌟 Application source code
+│   ├── main_client.py         # Entry point for the player client
+│   ├── main_server.py         # Entry point for the game server
+│   ├── scrabble.py            # Main GUI window (Tkinter) & board logic
+│   ├── letter.py              # Tile class (drag-and-drop, snapping, jokers)
+│   ├── polygon.py             # Vector geometric drawing (center star)
+│   ├── winscore.py            # Score companion window
+│   ├── calculator.py          # Scrabble adjudication & score calculation engine
+│   ├── constants.py           # Game rules, dimensions, letter bags (FR/EN) & multipliers
+│   ├── database.py            # User credentials repository with SHA-256 hashes
+│   ├── utils.py               # Utility helpers (centering, banner, SHA-256, paths)
+│   ├── scra_client.py         # Scrabble client domain specialization
+│   ├── scra_server.py         # Scrabble server domain specialization
+│   │
+│   ├── socketlib/             # Reusable generic socket library
+│   │   ├── abstract_serveur.py # Multithreaded TCP server, handshake & broadcast
+│   │   └── abstract_client.py  # TCP client, background listener & async queue
+│   │
+│   ├── dico/                  # Lexicographical dictionary engines & word lists
+│   │   ├── dictionary.py      # Prefix tree (Trie) & .dic cache management
+│   │   ├── dico_fr.txt        # Official reference word list (French)
+│   │   └── dico_en.txt        # Official reference word list (English)
+│   │
+│   └── img/                   # Graphic assets and illustrations
+│       ├── board.png          # Board snapshot
+│       ├── splash.png         # Splash screen image
+│       └── gameover.png       # Game over illustration
 │
-├── socketlib/             # Reusable generic socket library
-│   ├── abstract_serveur.py # Multithreaded TCP server, handshake & broadcast
-│   └── abstract_client.py  # TCP client, background listener & async queue
+├── tests/                     # 🧪 Automated unit test suite
+│   └── test_core.py
 │
-├── scra_server.py         # Scrabble server domain specialization
-├── scra_client.py         # Scrabble client domain specialization
+├── build_dist.py              # Cross-platform PyInstaller packaging (CI & local)
+├── QUICKSTART.txt             # Quickstart guide bundled into all releases
+├── specs_server.py            # Embedded local web server for OpenSpec dashboard
+├── specs.html                 # Pre-built HTML5 OpenSpec dashboard
+├── run_server.sh / .bat       # Server quick start shell scripts
+├── run_client.sh / .bat       # Client quick start shell scripts
+├── run_server.command         # macOS double-clickable launcher (server)
+├── run_client.command         # macOS double-clickable launcher (client)
 │
-├── dico/                  # Lexicographical dictionary engines & word lists
-│   ├── dictionary.py      # Prefix tree (Trie) & .dic cache management
-│   ├── dico_fr.txt        # Official reference word list (French)
-│   └── dico_en.txt        # Official reference word list (English)
+├── .github/workflows/         # Continuous Integration & Delivery (CI/CD)
+│   └── release.yml            # Automated cross-platform release builds
 │
-├── img/                   # Graphic assets and illustrations
-│   ├── board.png          # Board snapshot
-│   ├── splash.png         # Splash screen image
-│   └── gameover.png       # Game over illustration
-│
-└── openspec/              # Formal OpenSpec specifications (SDD)
-    ├── config.yaml        # Project configuration
-    ├── specs/             # Living requirements (coviscrabble.md)
-    ├── changes/           # Change lifecycle records (proposal, design, tasks)
-    ├── openspec_parser.py # Universal real-time parser without dependencies
+└── openspec/                  # Formal OpenSpec specifications (SDD)
+    ├── config.yaml            # Project configuration
+    ├── specs/                 # Living requirements (coviscrabble.md)
+    ├── changes/               # Change lifecycle records (proposal, design, tasks)
+    ├── openspec_parser.py     # Universal real-time parser without dependencies
     └── render_html.py     # Self-contained HTML5 dashboard renderer
 ```
 
@@ -136,7 +143,7 @@ In a first terminal window:
 
 ```bash
 # Start directly in English on port 1234
-python3 main_server.py -en -port 1234 -data database
+python3 src/main_server.py -en -port 1234 -data database
 
 # Or using the provided script (French mode):
 ./run_server.sh
@@ -155,7 +162,7 @@ In separate terminal windows (for each player):
 
 ```bash
 # Connect to the local server
-python3 main_client.py -en -host localhost -port 1234
+python3 src/main_client.py -en -host localhost -port 1234
 
 # Or using the provided script (French mode):
 ./run_client.sh
@@ -188,7 +195,7 @@ A login dialog will prompt upon launch.
 A unit test suite validates cryptography, lexicographical lookups (FR/EN), and OpenSpec consistency:
 
 ```bash
-python3 test_core.py
+python3 -m unittest discover -s tests
 ```
 
 Expected output:

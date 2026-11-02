@@ -28,5 +28,6 @@
 
 cd "$(dirname "$0")"
 export BASE=$(pwd)
+export PYTHONPATH="$BASE/src:$PYTHONPATH"
 
-python3 main_client.py -fr -host localhost -port 1234
+python3 src/main_client.py -fr -host localhost -port 1234

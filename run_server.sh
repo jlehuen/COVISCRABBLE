@@ -31,5 +31,6 @@ kill -9 $(lsof -ti tcp:$PORT) &> /dev/null
 
 cd "$(dirname "$0")"
 export BASE=$(pwd)
+export PYTHONPATH="$BASE/src:$PYTHONPATH"
 
-python3 main_server.py -fr -port $PORT -data database
+python3 src/main_server.py -fr -port $PORT -data database

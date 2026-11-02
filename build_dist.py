@@ -35,28 +35,33 @@ def build():
 
     # 1. Compilation du Client (GUI sans console)
     print("\n[1/2] Compilation du Client GUI (CoviScrabble)...")
+    img_data = os.path.join("src", "img") + f"{sep}img"
+    dico_data = os.path.join("src", "dico") + f"{sep}dico"
     client_args = [
         sys.executable, "-m", "PyInstaller",
         "--name", "CoviScrabble",
         "--windowed",
         "--noconfirm",
         "--clean",
-        "--add-data", f"img{sep}img",
-        "--add-data", f"dico{sep}dico",
-        "main_client.py"
+        "--paths", "src",
+        "--add-data", img_data,
+        "--add-data", dico_data,
+        os.path.join("src", "main_client.py")
     ]
     subprocess.check_call(client_args, cwd=BASE_DIR)
 
     # 2. Compilation du Serveur (Console)
     print("\n[2/2] Compilation du Serveur (CoviScrabble-Server)...")
+    db_data = os.path.join("src", "database.py") + f"{sep}."
     server_args = [
         sys.executable, "-m", "PyInstaller",
         "--name", "CoviScrabble-Server",
         "--console",
         "--noconfirm",
         "--clean",
-        "--add-data", f"database.py{sep}.",
-        "main_server.py"
+        "--paths", "src",
+        "--add-data", db_data,
+        os.path.join("src", "main_server.py")
     ]
     subprocess.check_call(server_args, cwd=BASE_DIR)
 
