@@ -1,0 +1,10 @@
+schema: "openspec/v1"
+project:
+  name: "coviscrabble"
+  description: "Jeu de Scrabble multijoueur en réseau (Client/Serveur Python 3, Tkinter, Sockets TCP)"
+  version: "1.1.0"
+
+settings:
+  framework: "Python 3 / Tkinter"
+  network: "Sockets TCP (socketlib)"
+  lexicon: "ODS / English Scrabble Dictionary"

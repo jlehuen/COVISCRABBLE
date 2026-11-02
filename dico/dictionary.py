@@ -77,8 +77,11 @@ class Dictionary:
 			for line in fhand:
 				word = line.rstrip()
 				if word:
-					print(word)
 					self.rootnode.add(word)
+
+	def search(self, word):
+		if not self.rootnode: return False
+		return self.rootnode.search(word)
 
 	def valide(self, word):
 		if not self.rootnode: return True

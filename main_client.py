@@ -46,10 +46,14 @@ def main():
 		print('Python 3.x required')
 		sys.exit(1)
 
+	addr = 'localhost'
+	port = 1234
+	lang = LANG
+
 	# Reading the command line args
 	for i,arg in enumerate(sys.argv):
-		if arg == '-fr': LANG = 'FR'
-		if arg == '-en': LANG = 'EN'
+		if arg == '-fr': lang = 'FR'
+		if arg == '-en': lang = 'EN'
 		if arg == '-host': addr = sys.argv[i+1]
 		if arg == '-port': port = int(sys.argv[i+1])
 
@@ -67,7 +71,7 @@ def main():
 	splash.destroy()
 
 	# Opening the main window
-	root = Scrabble(VERSION, LANG, addr, port, userdata)
+	root = Scrabble(VERSION, lang, addr, port, userdata)
 	root.after(1000, root.pool) # Start pooling for asynchronous messages
 	root.mainloop()
 

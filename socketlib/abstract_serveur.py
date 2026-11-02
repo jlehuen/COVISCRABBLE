@@ -34,7 +34,12 @@ from threading import Thread
 
 EOD = '$$' # End of data
 
-def getmyip(): return [ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith('127.')][0]
+def getmyip():
+	try:
+		ips = [ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith('127.')]
+		return ips[0] if ips else '127.0.0.1'
+	except Exception:
+		return '127.0.0.1'
 
 def get_data(expression, message): return re.findall(expression, message)[0]
 
@@ -134,7 +139,7 @@ class Abstract_serveur(ABC):
 				self.erreur(sock, 'bad handcheck protocol')
 				return False
 
-			data = get_data('^version:(\S+):(\S+)$', reponse)
+			data = get_data(r'^version:(\S+):(\S+)$', reponse)
 			maj,min = int(data[0]),int(data[1])
 
 			# Check the client's version
@@ -148,7 +153,7 @@ class Abstract_serveur(ABC):
 				self.erreur(sock, 'bad handcheck protocol')
 				return False
 
-			login = get_data('^mynameis:(\S+)$', reponse)
+			login = get_data(r'^mynameis:(\S+)$', reponse)
 
 			# Client password request
 			reponse = self.exchange(sock, addr,'password')
@@ -156,7 +161,7 @@ class Abstract_serveur(ABC):
 				self.erreur(sock, 'bad handcheck protocol')
 				return False
 
-			password = get_data('^password:(\S+)$', reponse)
+			password = get_data(r'^password:(\S+)$', reponse)
 
 			# Check login
 			if not self.check_login(login):

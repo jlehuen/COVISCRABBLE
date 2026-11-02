@@ -39,27 +39,34 @@ LANG = 'EN' # Default language
 ###################
 
 def main():
-	banner('C O V I S C R A B B L E')
+	banner('C O V I S C R A B B L E   S E R V E R')
 
 	# Checking the Python version
 	if sys.version_info < (3,0):
 		print('Python 3.x required')
 		sys.exit(1)
 
+	filename = 'database'
+	port = 1234
+	lang = LANG
+
 	# Reading the command line args
 	for i,arg in enumerate(sys.argv):
-		if arg == '-fr': LANG = 'FR'
-		if arg == '-en': LANG = 'EN'
+		if arg == '-fr': lang = 'FR'
+		if arg == '-en': lang = 'EN'
 		if arg == '-data': filename = sys.argv[i+1]
 		if arg == '-port': port = int(sys.argv[i+1])
 
 	file = __import__(filename)
 	userdico = file.USERS
-	serveur = Serveur(VERSION, LANG, port, userdico)
-
-	serveur_thread = threading.Thread(target=serveur.run)
-	serveur_thread.daemon = False
-	serveur_thread.start()
+	try:
+		serveur = Serveur(VERSION, lang, port, userdico)
+		serveur_thread = threading.Thread(target=serveur.run)
+		serveur_thread.daemon = False
+		serveur_thread.start()
+	except Exception:
+		print('Error while starting server, please check Internet connectivity...')
+		sys.exit(1)
 
 if __name__ == '__main__':
 	main()

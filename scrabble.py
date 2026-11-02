@@ -241,4 +241,4 @@ class Scrabble(Tk):
 		self.winscore.newscore(destinataire, '', somme)
 		# Game over popup window
 		title = 'The player %s put down the last letter' % destinataire
-		Splashwin(self, title, 'data/gameover.png', False)
+		Splashwin(self, title, 'img/gameover.png', False)

@@ -28,12 +28,16 @@
 
 from tkinter import *
 import sys, os
+import hashlib
 
 def banner(str):
 	l = len(str) + 6
 	print('-' * l)
 	print(str.center(l))
 	print('-' * l)
+
+def sha256(str):
+	return hashlib.sha256(str.encode()).hexdigest()
 
 ######################################
 ## Screen size and window centering ##
@@ -140,6 +144,6 @@ class Identification(Toplevel):
 
 	def valider(self):
 		self.login = self.login.get().replace(' ', '')
-		self.passwd = self.passwd.get().replace(' ', '')
+		self.passwd = sha256(self.passwd.get())
 		self.destroy()
 

@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenSpec Dashboard - {{ openspec.config.name }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #282F63;
+      --primary-light: #3f478a;
+      --dark-color: #0f172a;
+      --text-color: #334155;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --success-color: #16a34a;
+      --transition-speed: 0.2s;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-color);
+      background-color: var(--bg-color);
+      line-height: 1.6;
+    }
+
+    .specs-dashboard {
+      max-width: 1200px;
+      margin: 2rem auto 4rem auto;
+      padding: 0 1.25rem;
+    }
+
+    /* Bannière Hero */
+    .specs-hero {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #171b38 100%);
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 2.25rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      position: relative;
+      overflow: hidden;
+    }
+    .specs-hero::after {
+      content: "OPEN-SPEC";
+      position: absolute;
+      right: -20px;
+      bottom: -25px;
+      font-size: 5rem;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.04);
+      letter-spacing: 4px;
+      pointer-events: none;
+    }
+    .specs-hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .specs-hero h1 {
+      color: #ffffff;
+      font-size: 1.85rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .specs-hero p {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      max-width: 720px;
+      line-height: 1.5;
+    }
+    .specs-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(4px);
+      color: #ffffff;
+      font-size: 0.82rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    /* Grille KPI */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    }
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    }
+    .kpi-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .kpi-icon.blue { background: #e0f2fe; color: #0284c7; }
+    .kpi-icon.purple { background: #f3e8ff; color: #9333ea; }
+    .kpi-icon.green { background: #dcfce7; color: #16a34a; }
+    .kpi-icon.orange { background: #ffedd5; color: #ea580c; }
+    .kpi-content { flex-grow: 1; }
+    .kpi-value {
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--dark-color);
+      line-height: 1.1;
+    }
+    .kpi-label {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 500;
+      margin-top: 0.25rem;
+    }
+
+    /* Barre de progression */
+    .progress-wrap {
+      margin-top: 0.5rem;
+      width: 100%;
+      background: #e2e8f0;
+      border-radius: 6px;
+      height: 6px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--success-color);
+      border-radius: 6px;
+      transition: width 0.4s ease;
+    }
+
+    /* Contrôles (Onglets & Recherche) */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      background: var(--card-bg);
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+    .tabs-nav {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .tab-button {
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #64748b;
+      transition: all var(--transition-speed);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .tab-button:hover {
+      color: var(--primary-color);
+      background: #f1f5f9;
+    }
+    .tab-button.active {
+      background: var(--primary-color);
+      color: #ffffff;
+    }
+    .search-box {
+      position: relative;
+      min-width: 260px;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 0.5rem 0.75rem 0.5rem 2.2rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color var(--transition-speed);
+    }
+    .search-box input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(40, 47, 99, 0.15);
+    }
+    .search-box i {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    /* Onglets */
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cartes d'Exigences */
+    .req-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+      transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+    }
+    .req-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+    .req-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.6rem;
+    }
+    .req-badge {
+      font-family: monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+    .status-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .status-badge.validated { background: #dcfce7; color: #15803d; }
+    .req-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--dark-color);
+      margin: 0 0 0.75rem 0;
+    }
+    .req-points {
+      margin: 0;
+      padding-left: 1.25rem;
+      color: #475569;
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+    .req-points li { margin-bottom: 0.35rem; }
+
+    /* Code & Pre */
+    .specs-dashboard code, .req-card code, .change-card code {
+      background: #f1f5f9;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      padding: 0.15rem 0.45rem;
+      border-radius: 5px;
+      font-size: 0.88em;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 500;
+    }
+    .specs-dashboard pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88rem;
+      margin: 0.75rem 0;
+      border: 1px solid #334155;
+    }
+    .specs-dashboard pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      border: none;
+    }
+
+    /* Cartes de Changements */
+    .change-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    .change-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .change-id {
+      font-family: monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      background: #f8fafc;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+    .change-sections {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .change-box {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .change-box h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #475569;
+      margin: 0 0 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .change-box p {
+      font-size: 0.88rem;
+      color: #334155;
+      margin: 0;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    /* Tâches */
+    .tasks-container {
+      background: #fafafa;
+      border-radius: 8px;
+      padding: 1rem;
+      border: 1px solid #f0f0f0;
+    }
+    .task-group-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0.75rem 0 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .task-group-title:first-child { margin-top: 0; }
+    .task-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      transition: background var(--transition-speed);
+    }
+    .task-row:hover { background: #f1f5f9; }
+    .task-row.subtask { margin-left: 1.5rem; font-size: 0.85rem; color: #64748b; }
+    .task-check { margin-top: 2px; flex-shrink: 0; font-size: 0.95rem; }
+    .task-check.done { color: var(--success-color); }
+    .task-check.pending { color: #94a3b8; }
+
+    /* Configuration */
+    .config-table {
+      width: 100%;
+      background: var(--card-bg);
+      border-collapse: collapse;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      border: 1px solid var(--border-color);
+    }
+    .config-table th, .config-table td {
+      padding: 0.85rem 1.2rem;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    .config-table th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .config-table td { border-bottom: 1px solid #f1f5f9; }
+    .config-table tr:last-child td { border-bottom: none; }
+  </style>
+</head>
+<body>
+
+<div class="specs-dashboard">
+  <!-- Bannière Hero -->
+  <div class="specs-hero">
+    <div class="specs-hero-header">
+      <div>
+        <h1><i class="fas fa-microchip"></i> Tableau de bord OpenSpec</h1>
+        <p>
+          Développement Dirigé par les Spécifications (SDD) &bull; Traçabilité formelle des exigences, des cycles de changement et de la validation par les tests.
+        </p>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
+        <span class="specs-tag"><i class="fas fa-tag"></i> Projet : {{ openspec.config.name }} (v{{ openspec.config.version }})</span>
+        <span class="specs-tag"><i class="fas fa-server"></i> {{ openspec.config.settings.target_deployment|default('Production') }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grille des KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon blue"><i class="fas fa-clipboard-check"></i></div>
+      <div class="kpi-content">
+        <div class="kpi-value">{{ openspec.total_requirements }}</div>
+        <div class="kpi-label">Exigences Vivantes</div>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon purple"><i class="fas fa-code-branch"></i></div>
+      <div class="kpi-content">
+        <div class="kpi-value">{{ openspec.total_changes }}</div>
+        <div class="kpi-label">Cycles Déployés</div>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon orange"><i class="fas fa-tasks"></i></div>
+      <div class="kpi-content">
+        <div class="kpi-value">{{ openspec.completed_tasks }} / {{ openspec.total_tasks }}</div>
+        <div class="kpi-label">Tâches Réalisées</div>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon green"><i class="fas fa-check-circle"></i></div>
+      <div class="kpi-content">
+        <div class="kpi-value">{{ openspec.global_progress }}%</div>
+        <div class="kpi-label">Complétion Globale</div>
+        <div class="progress-wrap">
+          <div class="progress-bar" style="width: {{ openspec.global_progress }}%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barre de Contrôle (Onglets + Recherche) -->
+  <div class="controls-bar">
+    <div class="tabs-nav">
+      <button class="tab-button active" onclick="switchSpecTab('specs', this)">
+        <i class="fas fa-file-alt"></i> Exigences ({{ openspec.total_requirements }})
+      </button>
+      <button class="tab-button" onclick="switchSpecTab('changes', this)">
+        <i class="fas fa-history"></i> Cycles & Changements ({{ openspec.total_changes }})
+      </button>
+      <button class="tab-button" onclick="switchSpecTab('tasks', this)">
+        <i class="fas fa-check-double"></i> Matrice des Tâches
+      </button>
+      <button class="tab-button" onclick="switchSpecTab('config', this)">
+        <i class="fas fa-cog"></i> Configuration
+      </button>
+    </div>
+
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="specs-search" placeholder="Filtrer les exigences ou tâches..." onkeyup="filterSpecs()">
+    </div>
+  </div>
+
+  <!-- ONGLET 1 : EXIGENCES VIVANTES -->
+  <div id="tab-specs" class="tab-pane active">
+    {% for spec_file in openspec.specs %}
+      <div style="margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.15rem; color: var(--primary-color); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fas fa-book"></i> {{ spec_file.title }}
+          <span style="font-size: 0.8rem; font-weight: normal; color: #64748b;">({{ spec_file.count }} exigences dans <code>{{ spec_file.filename }}</code>)</span>
+        </h3>
+
+        {% for req in spec_file.requirements %}
+          <div class="req-card spec-search-item" data-text="{{ req.id }} {{ req.raw_name|default(req.name) }} {{ req.raw_description|default(req.description) }}">
+            <div class="req-header">
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <span class="req-badge">{{ req.id }}</span>
+                <span class="status-badge validated"><i class="fas fa-check"></i> Validé par tests</span>
+              </div>
+              <span style="font-size: 0.8rem; color: #94a3b8;"><i class="fas fa-file-code"></i> {{ req.spec_file }}</span>
+            </div>
+            <h4 class="req-title">{{ req.name|safe }}</h4>
+            {% if req.points %}
+              <ul class="req-points">
+                {% for pt in req.points %}
+                  <li>{{ pt|safe }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p style="color: #475569; font-size: 0.92rem; line-height: 1.5;">{{ req.description|safe }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- ONGLET 2 : CYCLES & CHANGEMENTS -->
+  <div id="tab-changes" class="tab-pane">
+    {% for chg in openspec.changes %}
+      <div class="change-card spec-search-item" data-text="{{ chg.id }} {{ chg.proposal.title }}">
+        <div class="change-top">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span class="change-id">{{ chg.id }}</span>
+            <h3 style="font-size: 1.2rem; margin: 0; color: var(--dark-color);">
+              {{ chg.proposal.title }}
+            </h3>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span class="status-badge validated"><i class="fas fa-check-circle"></i> {{ chg.status }}</span>
+            <span style="font-size: 0.85rem; font-weight: 700; color: #475569;">{{ chg.completed_tasks }}/{{ chg.total_tasks }} ({{ chg.percentage }}%)</span>
+          </div>
+        </div>
+
+        <div class="progress-wrap" style="margin-bottom: 1.25rem; height: 8px;">
+          <div class="progress-bar" style="width: {{ chg.percentage }}%;"></div>
+        </div>
+
+        <div class="change-sections">
+          {% if chg.proposal.why %}
+            <div class="change-box">
+              <h4><i class="fas fa-lightbulb" style="color: #eab308;"></i> Contexte & Problématique</h4>
+              <p>{{ chg.proposal.why|safe }}</p>
+            </div>
+          {% endif %}
+
+          {% if chg.proposal.what %}
+            <div class="change-box">
+              <h4><i class="fas fa-cogs" style="color: #0284c7;"></i> Proposition & Solution</h4>
+              <p>{{ chg.proposal.what|safe }}</p>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Tâches du cycle -->
+        <div class="tasks-container">
+          <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 0.6rem; color: #475569;">
+            <i class="fas fa-list-check"></i> Tâches d'implémentation du cycle :
+          </div>
+          {% for group in chg.task_groups %}
+            {% if group.name %}
+              <div class="task-group-title">{{ group.name }}</div>
+            {% endif %}
+            {% for task in group.tasks %}
+              <div class="task-row {% if task.is_subtask %}subtask{% endif %}">
+                {% if task.completed %}
+                  <i class="fas fa-check-circle task-check done"></i>
+                {% else %}
+                  <i class="far fa-circle task-check pending"></i>
+                {% endif %}
+                <span {% if task.completed %}style="color: #334155;"{% endif %}>{{ task.description|safe }}</span>
+              </div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- ONGLET 3 : MATRICE DES TÂCHES GLOBALE -->
+  <div id="tab-tasks" class="tab-pane">
+    <div style="background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border-color); padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+      <h3 style="font-size: 1.2rem; color: var(--primary-color); margin-bottom: 1rem;">
+        <i class="fas fa-check-double"></i> Synthèse Consolidée des Tâches ({{ openspec.completed_tasks }} / {{ openspec.total_tasks }})
+      </h3>
+
+      {% for chg in openspec.changes %}
+        <div style="margin-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <h4 style="font-size: 1.05rem; margin: 0; color: #1e293b;">
+              <code style="color: var(--primary-color);">{{ chg.id }}</code> &mdash; {{ chg.proposal.title }}
+            </h4>
+            <span class="status-badge validated">{{ chg.percentage }}% complété</span>
+          </div>
+
+          {% for group in chg.task_groups %}
+            <div style="margin-left: 0.5rem; margin-bottom: 0.5rem;">
+              <div style="font-size: 0.88rem; font-weight: 700; color: #475569; margin: 0.4rem 0;">
+                {{ group.name }}
+              </div>
+              {% for task in group.tasks %}
+                <div class="task-row {% if task.is_subtask %}subtask{% endif %} spec-search-item" data-text="{{ chg.id }} {{ task.raw_description|default(task.description) }}">
+                  {% if task.completed %}
+                    <i class="fas fa-check-circle task-check done"></i>
+                  {% else %}
+                    <i class="far fa-circle task-check pending"></i>
+                  {% endif %}
+                  <span>{{ task.description|safe }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ONGLET 4 : CONFIGURATION -->
+  <div id="tab-config" class="tab-pane">
+    <table class="config-table">
+      <thead>
+        <tr>
+          <th>Paramètre</th>
+          <th>Valeur</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Nom du projet</strong></td>
+          <td><code>{{ openspec.config.name }}</code></td>
+          <td>Identifiant souverain du référentiel</td>
+        </tr>
+        <tr>
+          <td><strong>Version actuelle</strong></td>
+          <td><span class="specs-tag" style="background: var(--primary-color); color: white;">v{{ openspec.config.version }}</span></td>
+          <td>Version actuelle documentée sous OpenSpec</td>
+        </tr>
+        <tr>
+          <td><strong>Schéma OpenSpec</strong></td>
+          <td><code>{{ openspec.config.schema }}</code></td>
+          <td>Norme de spécification utilisée</td>
+        </tr>
+        <tr>
+          <td><strong>Description</strong></td>
+          <td>{{ openspec.config.description }}</td>
+          <td>Objectif fonctionnel du projet</td>
+        </tr>
+        {% if openspec.config.settings.storage_driver %}
+        <tr>
+          <td><strong>Moteur de stockage</strong></td>
+          <td><code>{{ openspec.config.settings.storage_driver }}</code></td>
+          <td>Persistance locale et gestion relationnelle</td>
+        </tr>
+        {% endif %}
+        {% if openspec.config.settings.target_deployment %}
+        <tr>
+          <td><strong>Cible de déploiement</strong></td>
+          <td>{{ openspec.config.settings.target_deployment }}</td>
+          <td>Environnement d'exécution cible</td>
+        </tr>
+        {% endif %}
+        <tr>
+          <td><strong>Emplacement local</strong></td>
+          <td><code>openspec/</code></td>
+          <td>Répertoire versionné des spécifications et cycles</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  function switchSpecTab(tabId, btn) {
+    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+    btn.classList.add('active');
+    const target = document.getElementById('tab-' + tabId);
+    if (target) {
+      target.classList.add('active');
+    }
+  }
+
+  function filterSpecs() {
+    const input = document.getElementById('specs-search');
+    const query = input.value.toLowerCase().trim();
+    const items = document.querySelectorAll('.spec-search-item');
+
+    items.forEach(item => {
+      const text = (item.getAttribute('data-text') || item.innerText).toLowerCase();
+      if (!query || text.includes(query)) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
