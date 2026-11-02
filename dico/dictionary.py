@@ -27,8 +27,18 @@
 #########################################################################
 
 import pickle
+import sys, os
 from pathlib import Path
 from tkinter import messagebox
+
+try:
+	from utils import resource_path
+except ImportError:
+	def resource_path(rel):
+		if hasattr(sys, '_MEIPASS'):
+			return os.path.join(sys._MEIPASS, rel)
+		base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+		return os.path.join(base_dir, rel)
 
 ######################
 ## Class Dictionary ##
@@ -37,11 +47,11 @@ from tkinter import messagebox
 class Dictionary:
 
 	rootnode = None
-	dico_user = 'dico/dico_user.txt'
 
 	def __init__(self, dico):
-		self.filename_txt = 'dico/%s.txt' % dico
-		self.filename_dic = 'dico/%s.dic' % dico
+		self.filename_txt = resource_path('dico/%s.txt' % dico)
+		self.filename_dic = resource_path('dico/%s.dic' % dico)
+		self.dico_user = resource_path('dico/dico_user.txt')
 
 		# Search the compiled dictionary
 		if Path(self.filename_dic).is_file():

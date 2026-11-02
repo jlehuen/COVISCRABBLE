@@ -39,6 +39,13 @@ def banner(str):
 def sha256(str):
 	return hashlib.sha256(str.encode()).hexdigest()
 
+def resource_path(relative_path):
+	"""Obtient le chemin absolu vers une ressource, compatible PyInstaller et dev local."""
+	if hasattr(sys, '_MEIPASS'):
+		return os.path.join(sys._MEIPASS, relative_path)
+	base_dir = os.path.dirname(os.path.abspath(__file__))
+	return os.path.join(base_dir, relative_path)
+
 ######################################
 ## Screen size and window centering ##
 ######################################
@@ -102,7 +109,7 @@ class Splashwin(Toplevel):
 		self.transient(root) # Modal window
 		self.grab_set()
 
-		image = PhotoImage(file=filename)
+		image = PhotoImage(file=resource_path(filename))
 		Label(self, image=image).pack()
 		Button(self, text='  OK  ', command=self.destroy).pack(side=TOP)
 		center(self, parent=root)

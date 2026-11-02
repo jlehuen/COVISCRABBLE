@@ -61,7 +61,7 @@ def main():
 	splash = Tk()
 	splash.title('C O V I S C R A B B L E  %d.%d' % VERSION)
 	splash.resizable(False, False)
-	image = PhotoImage(file='img/splash.png')
+	image = PhotoImage(file=resource_path('img/splash.png'))
 	Label(splash, image=image).pack()
 	center(splash)
 

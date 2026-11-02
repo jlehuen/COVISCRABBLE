@@ -8,6 +8,7 @@
 
 **Jeu de Scrabble multijoueur en réseau avec architecture Client/Serveur en Python**
 
+[![GitHub Release](https://img.shields.io/github/v/release/jlehuen/COVISCRABBLE?color=success&logo=github)](https://github.com/jlehuen/COVISCRABBLE/releases)
 [![Python Version](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![GUI](https://img.shields.io/badge/GUI-Tkinter%20Canvas-orange.svg)](https://docs.python.org/3/library/tkinter.html)
 [![Networking](https://img.shields.io/badge/Sockets-TCP%20Multithread%C3%A9-green.svg)](https://docs.python.org/3/library/socket.html)

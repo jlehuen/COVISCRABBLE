@@ -16,3 +16,8 @@ dico/*.dic
 .venv
 env/
 venv/
+
+# PyInstaller build outputs
+build/
+dist/
+*.spec
