@@ -103,6 +103,9 @@ coviscrabble/
 ├── tests/                     # 🧪 Suite de tests unitaires automatisés
 │   └── test_core.py
 │
+├── img/                       # Visuels pour la documentation (README)
+│   └── board.png              # Capture d'écran du plateau
+│
 ├── build_dist.py              # Packaging multiplateforme PyInstaller (CI & local)
 ├── QUICKSTART.txt             # Guide de démarrage rapide embarqué dans les releases
 ├── specs_server.py            # Serveur web local embarqué pour le dashboard OpenSpec

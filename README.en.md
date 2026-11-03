@@ -103,6 +103,9 @@ coviscrabble/
 ├── tests/                     # 🧪 Automated unit test suite
 │   └── test_core.py
 │
+├── img/                       # Documentation visual assets (README)
+│   └── board.png              # Board snapshot
+│
 ├── build_dist.py              # Cross-platform PyInstaller packaging (CI & local)
 ├── QUICKSTART.txt             # Quickstart guide bundled into all releases
 ├── specs_server.py            # Embedded local web server for OpenSpec dashboard
